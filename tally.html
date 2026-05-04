@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dikri Counter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a2e;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .box {
+            background: #16213e;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            width: 300px;
+        }
+        h1 { color: #e94560; margin-bottom: 15px; }
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            background: #0c68d8;
+            color: #fff;
+            border: none;
+        }
+        .dikri { color: #ffd700; font-size: 22px; margin: 10px 0; }
+        .meaning { color: #aaa; font-size: 14px; margin-bottom: 15px; }
+        .count { font-size: 60px; font-weight: bold; margin: 15px 0; }
+        .btns { display: flex; gap: 10px; justify-content: center; }
+        button {
+            padding: 15px 20px;
+            font-size: 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #e94560;
+            color: #fff;
+        }
+        button:hover { background: #ff6b6b; }
+        .info { margin-top: 15px; color: #aaa; }
+        .done { color: #00d9ff; font-weight: bold; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>📿 Dikri Counter</h1>
+        <select id="dikriSelect" onchange="changeDikri()">
+            <option value="">Dooro Dikri</option>
+        </select>
+        <div class="dikri" id="dikriText">Dooro Dikri</div>
+        <div class="meaning" id="dikriMean">--</div>
+        <div class="count" id="count">0</div>
+        <div class="btns">
+        
+            <button onclick="update(1)">➕</button>
+        </div>
+        <div class="info">Target: <span id="target">0</span></div>
+        <div class="done" id="msg"></div>
+    </div>
+
+    <script>
+        // Array of objects
+        const dikris = [
+            { id: 1, name: "Subhanallah", text: "سبحان الله", mean: "Glory be to Allah", target: 33 },
+            { id: 2, name: "Alhamdulillah", text: "الحمد لله", mean: "Praise be to Allah", target: 33 },
+            { id: 3, name: "Allahu Akbar", text: "الله أكبر", mean: "Allah is Greatest", target: 33 },
+            { id: 4, name: "Astaghfirullah", text: "أستغفر الله", mean: "I seek forgiveness", target: 100 }
+        ];
+
+        let count = 0;
+        let current = null;
+
+        // Loop to fill select
+        const select = document.getElementById('dikriSelect');
+        for (let i = 0; i < dikris.length; i++) {
+            let opt = document.createElement('option');
+            opt.value = dikris[i].id;
+            opt.textContent = dikris[i].text;
+            select.appendChild(opt);
+        }
+
+        // Get dikri by id with loop
+        function getDikri(id) {
+            for (let i = 0; i < dikris.length; i++) {
+                if (dikris[i].id == id) return dikris[i];
+            }
+            return null;
+        }
+
+        // Change dikri
+        function changeDikri() {
+            current = getDikri(select.value);
+            count = 0;
+            show();
+        }
+
+        // Update count
+        function update(n) {
+            if (!current) { alert("Dooro dikri marka hore!"); return; }
+            count += n;
+            if (count < 0) count = 0;
+            show();
+            check();
+        }
+
+        // Show on screen
+        function show() {
+            if (current) {
+                document.getElementById('dikriText').textContent = current.text;
+                document.getElementById('dikriMean').textContent = current.mean;
+                document.getElementById('target').textContent = current.target;
+            }
+            document.getElementById('count').textContent = count;
+            document.getElementById('msg').textContent = "";
+        }
+
+        // Check if target reached
+        function check() {
+            if (current && count >= current.target) {
+                document.getElementById('msg').textContent = "✅ Waa la dhammaystiray!";
+                // Auto next after 1.5 seconds
+                setTimeout(nextDikri, 1500);
+            }
+        }
+
+        // Go to next dikri
+        function nextDikri() {
+            for (let i = 0; i < dikris.length; i++) {
+                if (dikris[i].id == current.id) {
+                    if (i + 1 < dikris.length) {
+                        select.value = dikris[i + 1].id;
+                        changeDikri();
+                        document.getElementById('msg').textContent = "➡️ Next: " + dikris[i + 1].text;
+                    } else {
+                        document.getElementById('msg').textContent = "🎉 Dhammaan waa la dhammaystiray!";
+                    }
+                    break;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
+
